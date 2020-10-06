@@ -1,15 +1,14 @@
-package pl.piotr.email;
+package pl.piotr.email.reader;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class ContentReader {
+public class ContentReader extends Reader {
 
     public static String getContent() {
-        String path = System.getProperty("user.dir");
-        Path filePath = Paths.get(path + "/properties/content.txt");
+        Path filePath = Paths.get(PATH_TO_CONTENT);
 
         try {
             String data = new String(Files.readAllBytes(filePath));

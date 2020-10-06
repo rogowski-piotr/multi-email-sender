@@ -1,5 +1,8 @@
 package pl.piotr.email;
 
+import pl.piotr.email.reader.AddressesReader;
+import pl.piotr.email.sender.MailSender;
+
 import java.util.List;
 
 public class Main {

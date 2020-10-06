@@ -1,10 +1,20 @@
-package pl.piotr.email;
+package pl.piotr.email.sender;
 
+import pl.piotr.email.reader.AttachmentReader;
+import pl.piotr.email.reader.ContentReader;
+import pl.piotr.email.reader.PropertiesReader;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class MailSender {
@@ -33,6 +43,7 @@ public class MailSender {
         } catch (Exception e) {
             System.out.println("Message wasn't sent");
             System.out.println(e.getMessage());
+            System.out.println(e.getCause().getMessage());
         }
     }
 
@@ -50,12 +61,18 @@ public class MailSender {
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart);
 
-            MimeBodyPart attachPart = new MimeBodyPart();
-            attachPart.attachFile("Path/To/Attach/File");
-            multipart.addBodyPart(attachPart);
+
+            Map<String, String> attachments = AttachmentReader.getAttachments();
+            for (String fileName : attachments.keySet()) {
+                String fileUrl = attachments.get(fileName);
+                DataSource source = new FileDataSource(fileUrl);
+                messageBodyPart = new MimeBodyPart();
+                messageBodyPart.setDataHandler(new DataHandler(source));
+                messageBodyPart.setFileName(fileName);
+                multipart.addBodyPart(messageBodyPart);
+            }
 
             message.setContent(multipart);
-
             return message;
         } catch (Exception e) {
             System.out.println(e.getMessage());
